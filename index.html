@@ -661,12 +661,45 @@
       gap: 1rem;
       align-items: flex-start;
     }
-    .portrait { width: 80px; height: 80px; }
-    h1.greeting { font-size: 1.6rem; }
+    .portrait { width: 110px; height: 110px; }
+    h1.greeting { font-size: 1.75rem; line-height: 1.1; }
     h2.section-title { font-size: 1.5rem; }
     .project h3 { font-size: 1.3rem; }
     footer.site .cols { grid-template-columns: 1fr; }
+    .brand img { height: 36px; width: 36px; }
     nav.primary { gap: 1rem; }
+    nav.primary a { font-size: 0.85rem; padding: 0.25rem 0; }
+
+    /* Bigger touch targets on mobile */
+    .btn { padding: 0.85rem 1.15rem; min-height: 44px; }
+
+    /* Pop-up: tighter padding, single-column info, smaller logo */
+    .cc-dialog { padding: 1.5rem 1rem 1.25rem; width: min(94vw, 480px); }
+    .cc-dialog-title { font-size: 1.25rem; }
+    .cc-dialog-sub { font-size: 0.85rem; margin-bottom: 1rem; }
+    .cc-dialog-grid { gap: 1rem; }
+    .cc-dialog-logo { max-width: 140px; }
+    .cc-dialog-info { grid-template-columns: 1fr; gap: 0.75rem; }
+    .cc-dialog-info > li:last-child { grid-column: auto; }
+    .cc-dialog-info-icon { width: 2.25rem; height: 2.25rem; }
+    .cc-dialog-info-icon svg { width: 1rem; height: 1rem; }
+    .cc-dialog-info-label { font-size: 0.85rem; }
+    .cc-dialog-info-value { font-size: 0.8rem; }
+    .cc-form { padding-left: 0; }
+    .cc-dialog-close { top: 0.5rem; right: 0.5rem; }
+
+    /* Form fields full-size on mobile (still h-10 like shadcn but easier to tap) */
+    .cc-field input, .cc-field textarea, .cc-submit { font-size: 0.95rem; }
+
+    /* Carousel breathing room on small screens */
+    section.gallery4 { padding: 2rem 0 3rem; }
+  }
+
+  /* Very narrow phones */
+  @media screen and (max-width: 359px) {
+    .portrait { width: 88px; height: 88px; }
+    h1.greeting { font-size: 1.5rem; }
+    nav.primary { gap: 0.75rem; }
     nav.primary a { font-size: 0.8rem; }
   }
 </style>
@@ -840,7 +873,6 @@
         <li><a href="https://github.com/ATOMFLAME" target="_blank" rel="noopener noreferrer">GitHub</a></li>
         <li><a href="#">LinkedIn</a></li>
       </ul>
-      <p style="margin-top:1rem;">Inspired by Ram Maheshwari's website.</p>
     </div>
   </div>
 </footer>
