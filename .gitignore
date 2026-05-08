@@ -1,0 +1,15 @@
+node_modules/
+temporary screenshots/
+
+# Reference image from the site we cloned at the start — not Jeric's content
+catalinonutu.com_.png
+
+# Claude Code local permission allowlist — machine-specific
+.claude/settings.local.json
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/

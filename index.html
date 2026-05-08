@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Jeric - Web Developer</title>
+<style>
+  :root[data-theme=dark] {
+    --dark: #000000;
+    --darkLighter: #0d1620;
+    --light: #e8eef3;
+    --lightDarker: #6b7a8a;
+    --accent: #87ceeb;
+    --lightRgb: 232, 238, 243;
+    --accentRgb: 135, 206, 235;
+    --darkRgb: 0, 0, 0;
+    --shadowColor: rgba(0, 0, 0, .85);
+    --shadow: 0 0px 10px var(--shadowColor);
+    --shadowLifted: 0 0px 64px -10px var(--shadowColor);
+  }
+  :root {
+    --maxWidth: 1200px;
+    --gutter: 2rem;
+    --animationCurve: cubic-bezier(.22, 1, .36, 1);
+    --transitionDuration: .3s;
+  }
+  @media screen and (max-width: 767px) {
+    :root { --gutter: 1rem; }
+  }
+  * { box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    background-color: var(--dark);
+    color: var(--light);
+    transition: all var(--transitionDuration) ease;
+    word-wrap: break-word;
+    font-family: Verdana, sans-serif;
+    line-height: 1.5;
+    margin: auto;
+    overflow-wrap: break-word;
+    text-align: left;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Shader background (vanilla port of animated-shader-background.tsx) */
+  #shader-bg {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    display: block;
+  }
+  /* Soft fade to pure black below the hero so content is readable */
+  #shader-fade {
+    position: fixed;
+    left: 0; right: 0; top: 0;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg,
+      rgba(0,0,0,0) 0%,
+      rgba(0,0,0,0) 55%,
+      rgba(0,0,0,0.85) 90%,
+      rgba(0,0,0,1) 100%);
+  }
+  /* Lift all real content above the shader */
+  header.site, section.hero, section.block, footer.site { position: relative; z-index: 1; }
+
+  .wrap {
+    max-width: var(--maxWidth);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  /* Header */
+  header.site {
+    padding: 1.5rem 0 0.5rem;
+  }
+  header.site .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .brand {
+    color: var(--light);
+    font-weight: bold;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+  }
+  .brand img {
+    height: 44px;
+    width: 44px;
+    display: block;
+    border-radius: 6px;
+    transition: opacity var(--transitionDuration) ease;
+  }
+  .brand:hover img { opacity: 0.85; }
+  nav.primary { display: flex; gap: 1.5rem; }
+  nav.primary a {
+    color: var(--light);
+    font-size: 0.9rem;
+  }
+  nav.primary a:hover { color: var(--accent); text-decoration: none; }
+
+  /* Hero */
+  section.hero {
+    padding: 3rem 0 4rem;
+  }
+  section.hero .wrap {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 3rem;
+    row-gap: 0;
+    align-items: center;
+  }
+  h1.greeting {
+    font-size: 3rem;
+    line-height: 1.15;
+    margin: 0;
+    font-weight: bold;
+  }
+  h1.greeting .accent { color: var(--accent); }
+  .hero p.bio {
+    color: var(--light);
+    font-size: 1.05rem;
+    margin: 0;
+    max-width: 38rem;
+    grid-column: 1 / -1;
+  }
+  .hero .cta-row { grid-column: 1 / -1; margin-top: 1rem; }
+  .cta-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-block;
+    padding: 0.7rem 1.25rem;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: bold;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: transform var(--transitionDuration) var(--animationCurve),
+                background-color var(--transitionDuration) ease,
+                color var(--transitionDuration) ease,
+                border-color var(--transitionDuration) ease;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background-color: var(--accent);
+    color: var(--dark);
+  }
+  .btn-primary:hover { transform: translateY(-2px); text-decoration: none; }
+  .btn-outline {
+    background: transparent;
+    color: var(--light);
+    border-color: var(--lightDarker);
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+  .portrait {
+    width: 220px;
+    height: 220px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadowLifted);
+    background: transparent;
+    flex-shrink: 0;
+  }
+  .portrait img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+  /* Sections */
+  section.block { padding: 3rem 0; }
+  h2.section-title {
+    font-size: 2rem;
+    margin: 0 0 1.5rem;
+    font-weight: bold;
+  }
+
+  /* About */
+  .about-card {
+    background: var(--darkLighter);
+    border-radius: 8px;
+    padding: 1.75rem;
+    box-shadow: var(--shadow);
+  }
+  .about-card p {
+    margin: 0 0 1rem;
+    color: var(--light);
+    font-size: 0.95rem;
+  }
+  .about-card p:last-of-type { margin-bottom: 0; }
+
+  /* Projects */
+  .project {
+    background: var(--darkLighter);
+    border-radius: 8px;
+    padding: 1.75rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+  }
+  .project h3 {
+    margin: 0 0 1rem;
+    font-size: 1.6rem;
+    color: var(--accent);
+    font-weight: bold;
+  }
+  .project .preview {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--dark);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+    border: 1px solid rgba(var(--lightRgb), 0.06);
+  }
+  .project .preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .desc-label {
+    color: var(--lightDarker);
+    font-size: 0.85rem;
+    margin: 0 0 0.6rem;
+  }
+  .desc-label::before { content: "# "; color: var(--accent); }
+  .project p.body {
+    margin: 0 0 1rem;
+    font-size: 0.95rem;
+  }
+  .project .tags { margin-bottom: 1.25rem; }
+  .project .actions { display: flex; gap: 0.75rem; }
+
+  /* Gallery4 (vanilla port of /components/ui/gallery4) */
+  section.gallery4 { padding: 4rem 0 5rem; }
+  .gallery4-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+  .gallery4-heading { display: flex; flex-direction: column; gap: 1rem; }
+  .gallery4-heading .section-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .gallery4-desc {
+    color: var(--lightDarker);
+    max-width: 32rem;
+    margin: 0;
+    font-size: 0.95rem;
+  }
+  .gallery4-controls { display: flex; gap: 0.5rem; flex-shrink: 0; }
+  .gallery4-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--light);
+    border: 1px solid rgba(var(--lightRgb), 0.12);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--transitionDuration) ease,
+                border-color var(--transitionDuration) ease,
+                color var(--transitionDuration) ease,
+                opacity var(--transitionDuration) ease,
+                transform var(--transitionDuration) var(--animationCurve);
+  }
+  .gallery4-btn svg { width: 1.1rem; height: 1.1rem; display: block; }
+  .gallery4-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .gallery4-btn:disabled { opacity: 0.35; cursor: default; }
+
+  .gallery4-track-wrap {
+    overflow: hidden;
+    width: 100%;
+  }
+  .gallery4-track {
+    display: flex;
+    gap: 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0 var(--gutter);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .gallery4-track::-webkit-scrollbar { display: none; }
+  /* Wide-screen indent so carousel aligns with the 1200px content column */
+  @media (min-width: 1440px) {
+    .gallery4-track { padding-left: max(var(--gutter), calc(50vw - 600px)); padding-right: max(var(--gutter), calc(50vw - 600px)); }
+  }
+  .gallery4-item {
+    flex: 0 0 auto;
+    width: min(80vw, 360px);
+    scroll-snap-align: start;
+  }
+  @media (min-width: 1024px) {
+    .gallery4-item { width: 360px; }
+  }
+
+  .gallery4-card {
+    position: relative;
+    display: block;
+    height: 100%;
+    min-height: 27rem;
+    border-radius: 14px;
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--light);
+    background: var(--darkLighter);
+    box-shadow: var(--shadow);
+    isolation: isolate;
+    transition: transform var(--transitionDuration) var(--animationCurve);
+  }
+  .gallery4-card:hover { transform: translateY(-4px); text-decoration: none; }
+  .gallery4-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.5s var(--animationCurve);
+  }
+  .gallery4-card:hover .gallery4-img { transform: scale(1.05); }
+  .gallery4-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 55%, rgba(0,0,0,0.85) 100%);
+  }
+  .gallery4-content {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .gallery4-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+  .gallery4-snippet {
+    font-size: 0.9rem;
+    color: rgba(var(--lightRgb), 0.85);
+    margin-bottom: 1.25rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .gallery4-readmore {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--accent);
+  }
+  .gallery4-readmore svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform var(--transitionDuration) var(--animationCurve);
+  }
+  .gallery4-card:hover .gallery4-readmore svg { transform: translateX(4px); }
+
+  .gallery4-dots {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .gallery4-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    background: rgba(var(--accentRgb), 0.25);
+    cursor: pointer;
+    transition: background-color var(--transitionDuration) ease, transform var(--transitionDuration) var(--animationCurve);
+  }
+  .gallery4-dot[aria-selected="true"] { background: var(--accent); transform: scale(1.15); }
+  .gallery4-dot:hover { background: rgba(var(--accentRgb), 0.6); }
+
+  @media (max-width: 767px) {
+    .gallery4-head {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .gallery4-controls { display: none; }
+    section.gallery4 { padding: 2.5rem 0 3rem; }
+  }
+
+  /* Contact popup dialog */
+  .cc-dialog {
+    border: 1px solid rgba(var(--lightRgb), 0.12);
+    background: var(--darkLighter);
+    color: var(--light);
+    border-radius: 12px;
+    padding: 1.75rem 1.5rem 1.5rem;
+    width: min(94vw, 880px);
+    max-height: 92vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 80px -10px rgba(0,0,0,0.85);
+    margin: auto;
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+    transition: opacity 0.22s var(--animationCurve),
+                transform 0.22s var(--animationCurve);
+  }
+  .cc-dialog[open] { opacity: 1; transform: translateY(0) scale(1); }
+  .cc-dialog::backdrop {
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(4px);
+  }
+  .cc-dialog-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    color: var(--lightDarker);
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color var(--transitionDuration) ease,
+                border-color var(--transitionDuration) ease,
+                background-color var(--transitionDuration) ease;
+  }
+  .cc-dialog-close svg { width: 1rem; height: 1rem; }
+  .cc-dialog-close:hover { color: var(--accent); border-color: rgba(var(--accentRgb), 0.4); }
+  .cc-dialog-title {
+    margin: 0 0 0.4rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-align: center;
+  }
+  .cc-dialog-sub {
+    margin: 0 0 1.25rem;
+    color: var(--lightDarker);
+    font-size: 0.9rem;
+    text-align: center;
+  }
+  .cc-dialog-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  @media (min-width: 600px) {
+    .cc-dialog-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      align-items: stretch;
+    }
+  }
+  .cc-dialog-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+  @media (min-width: 600px) {
+    .cc-dialog-left {
+      padding: 1.25rem 1.75rem 1.25rem 0.5rem;
+      border-right: 1px solid rgba(var(--lightRgb), 0.08);
+      align-self: stretch;
+    }
+    .cc-form { padding-left: 1.75rem; }
+  }
+  .cc-dialog-logo {
+    display: block;
+    width: 100%;
+    max-width: 220px;
+    height: auto;
+  }
+  .cc-dialog-info {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem 0.6rem;
+    align-content: center;
+    justify-items: center;
+    width: 100%;
+  }
+  .cc-dialog-info > li:last-child { grid-column: 1 / -1; }
+  .cc-dialog-info a,
+  .cc-dialog-info-static {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0;
+    text-decoration: none;
+    color: var(--light);
+    transition: transform var(--transitionDuration) var(--animationCurve);
+  }
+  .cc-dialog-info a:hover { text-decoration: none; transform: translateX(2px); }
+  .cc-dialog-info a:hover .cc-dialog-info-icon {
+    background: rgba(var(--accentRgb), 0.15);
+    color: var(--accent);
+    border-color: rgba(var(--accentRgb), 0.4);
+  }
+  .cc-dialog-info-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 8px;
+    background: rgba(var(--lightRgb), 0.05);
+    border: 1px solid rgba(var(--lightRgb), 0.08);
+    color: var(--light);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color var(--transitionDuration) ease,
+                color var(--transitionDuration) ease,
+                border-color var(--transitionDuration) ease;
+  }
+  .cc-dialog-info-icon svg { width: 0.95rem; height: 0.95rem; display: block; }
+  .cc-dialog-info-text { display: flex; flex-direction: column; gap: 0.05rem; line-height: 1.2; }
+  .cc-dialog-info-label { font-weight: 600; font-size: 0.78rem; }
+  .cc-dialog-info-value { color: var(--lightDarker); font-size: 0.78rem; overflow-wrap: anywhere; }
+  /* divider removed — side-by-side layout uses a vertical border instead */
+  /* shadcn-styled form (Input / Label / Textarea / Button) */
+  .cc-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;             /* space-y-4 */
+    width: 100%;
+  }
+  .cc-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;           /* gap-2 */
+  }
+  .cc-field label {
+    font-size: 0.875rem;   /* text-sm */
+    font-weight: 500;      /* font-medium */
+    line-height: 1;        /* leading-none */
+    color: var(--light);
+  }
+  .cc-field input,
+  .cc-field textarea {
+    display: flex;
+    width: 100%;
+    height: 2.5rem;        /* h-10 */
+    padding: 0.5rem 0.75rem; /* py-2 px-3 */
+    border-radius: 0.375rem; /* rounded-md */
+    border: 1px solid rgba(var(--lightRgb), 0.20); /* border-input */
+    background-color: var(--dark); /* bg-background */
+    color: var(--light);
+    font-family: inherit;
+    font-size: 0.875rem;   /* text-sm */
+    line-height: 1.25rem;
+    transition: box-shadow var(--transitionDuration) ease,
+                border-color var(--transitionDuration) ease;
+  }
+  .cc-field input::placeholder,
+  .cc-field textarea::placeholder {
+    color: var(--lightDarker); /* placeholder:text-muted-foreground */
+  }
+  .cc-field input:focus-visible,
+  .cc-field textarea:focus-visible {
+    outline: none;
+    /* ring-2 ring-ring ring-offset-2 ring-offset-background */
+    box-shadow: 0 0 0 2px var(--darkLighter),
+                0 0 0 4px var(--accent);
+    border-color: rgba(var(--lightRgb), 0.20);
+  }
+  .cc-field input:disabled,
+  .cc-field textarea:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  .cc-field textarea {
+    height: auto;
+    min-height: 5rem;       /* min-h-[80px] */
+    resize: vertical;
+  }
+  .cc-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    width: 100%;
+    height: 2.5rem;        /* h-10 */
+    padding: 0.5rem 1rem;  /* py-2 px-4 */
+    border: 1px solid transparent;
+    border-radius: 0.375rem; /* rounded-md */
+    background-color: var(--accent); /* bg-primary */
+    color: var(--dark);              /* text-primary-foreground */
+    font-family: inherit;
+    font-size: 0.875rem;   /* text-sm */
+    font-weight: 500;      /* font-medium */
+    cursor: pointer;
+    transition: background-color var(--transitionDuration) ease,
+                box-shadow var(--transitionDuration) ease;
+  }
+  .cc-submit:hover { background-color: rgba(var(--accentRgb), 0.9); }
+  .cc-submit:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--darkLighter),
+                0 0 0 4px var(--accent);
+  }
+  .cc-submit:disabled { pointer-events: none; opacity: 0.5; }
+
+  /* Footer */
+  footer.site {
+    padding: 2.5rem 0 2rem;
+    border-top: 1px solid rgba(var(--lightRgb), 0.08);
+    margin-top: 3rem;
+  }
+  footer.site .cols {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 2rem;
+  }
+  footer.site h4 {
+    font-size: 0.9rem;
+    margin: 0 0 0.75rem;
+    color: var(--light);
+  }
+  footer.site p, footer.site a {
+    font-size: 0.85rem;
+    color: var(--lightDarker);
+  }
+  footer.site a:hover { color: var(--accent); text-decoration: none; }
+  footer.site ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.4rem; }
+
+  /* Responsive */
+  @media screen and (max-width: 767px) {
+    section.hero { padding: 1.5rem 0 2rem; }
+    section.hero .wrap {
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .portrait { width: 80px; height: 80px; }
+    h1.greeting { font-size: 1.6rem; }
+    h2.section-title { font-size: 1.5rem; }
+    .project h3 { font-size: 1.3rem; }
+    footer.site .cols { grid-template-columns: 1fr; }
+    nav.primary { gap: 1rem; }
+    nav.primary a { font-size: 0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="shader-bg" aria-hidden="true"></canvas>
+<div id="shader-fade" aria-hidden="true"></div>
+
+<header class="site">
+  <div class="wrap">
+    <a href="#" class="brand" aria-label="Jeric — home">
+      <img src="jeric_logo_refined.svg" alt="Jeric" />
+    </a>
+    <nav class="primary">
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#" data-open-contact>Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1 class="greeting">Hey, I'm <span class="accent">Jeric!</span></h1>
+    <div class="portrait">
+      <img src="jeric_logo_refined.svg" alt="Jeric logo" />
+    </div>
+    <p class="bio">Aspiring web and app developer.</p>
+    <div class="cta-row">
+      <a href="#contact" class="btn btn-primary" data-open-contact>Get in touch</a>
+      <a href="#projects" class="btn btn-outline">View projects</a>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="about">
+  <div class="wrap">
+    <h2 class="section-title">About me</h2>
+    <div class="about-card">
+      <p>I'm an Economics and Management student at the University of Oxford. I'm interested in how Economic theory and the study of human behaviour can explain decisions and the interactions between firms.</p>
+      <p>I enjoy learning and am currently learning coding. I'm interested in web and application design and creating automations.</p>
+    </div>
+  </div>
+</section>
+
+<section class="block gallery4" id="projects">
+  <div class="wrap gallery4-head">
+    <div class="gallery4-heading">
+      <h2 class="section-title">Projects</h2>
+      <p class="gallery4-desc">A walkthrough of what I'm currently building. Each card opens a deeper write-up with the stack, tradeoffs, and lessons.</p>
+    </div>
+    <div class="gallery4-controls" aria-hidden="false">
+      <button class="gallery4-btn" data-dir="prev" aria-label="Previous slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <button class="gallery4-btn" data-dir="next" aria-label="Next slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="gallery4-track-wrap">
+    <ul class="gallery4-track" role="region" aria-label="Project carousel">
+      <li class="gallery4-item">
+        <a href="#" class="gallery4-card">
+          <img class="gallery4-img" src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080" alt="Calorie Tracker" loading="lazy" />
+          <div class="gallery4-overlay"></div>
+          <div class="gallery4-content">
+            <div class="gallery4-title">Calorie Tracker</div>
+            <div class="gallery4-snippet">TBC — a personal nutrition tracker focused on speed of entry and clean visualization of intake over time.</div>
+            <div class="gallery4-readmore">
+              Read more
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="gallery4-dots" role="tablist" aria-label="Slide indicators"></div>
+</section>
+
+<dialog id="contact-dialog" class="cc-dialog" aria-labelledby="cc-dialog-title">
+  <button type="button" class="cc-dialog-close" data-close-contact aria-label="Close">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+  </button>
+  <h3 id="cc-dialog-title" class="cc-dialog-title">Send me a message</h3>
+  <p class="cc-dialog-sub">Fill in the form below and I'll get back to you shortly.</p>
+
+  <div class="cc-dialog-grid">
+    <div class="cc-dialog-left">
+      <img class="cc-dialog-logo" src="jeric_logo_refined.svg" alt="Jeric" />
+      <ul class="cc-dialog-info" aria-label="Direct contact details">
+      <li>
+        <a href="mailto:jeric.khua@gmail.com">
+          <span class="cc-dialog-info-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+          </span>
+          <span class="cc-dialog-info-text">
+            <span class="cc-dialog-info-label">Email</span>
+            <span class="cc-dialog-info-value">jeric.khua@gmail.com</span>
+          </span>
+        </a>
+      </li>
+      <li>
+        <a href="tel:+6581386774">
+          <span class="cc-dialog-info-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </span>
+          <span class="cc-dialog-info-text">
+            <span class="cc-dialog-info-label">Phone</span>
+            <span class="cc-dialog-info-value">+65 8138 6774</span>
+          </span>
+        </a>
+      </li>
+      <li>
+        <span class="cc-dialog-info-static">
+          <span class="cc-dialog-info-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </span>
+          <span class="cc-dialog-info-text">
+            <span class="cc-dialog-info-label">Location</span>
+            <span class="cc-dialog-info-value">Remote — open to collaboration</span>
+          </span>
+        </span>
+      </li>
+    </ul>
+    </div>
+
+    <form class="cc-form" id="cc-form">
+    <div class="cc-field">
+      <label for="cc-name">Name</label>
+      <input id="cc-name" type="text" name="name" autocomplete="name" required />
+    </div>
+    <div class="cc-field">
+      <label for="cc-email">Email</label>
+      <input id="cc-email" type="email" name="email" autocomplete="email" required />
+    </div>
+    <div class="cc-field">
+      <label for="cc-phone">Phone</label>
+      <input id="cc-phone" type="tel" name="phone" autocomplete="tel" />
+    </div>
+    <div class="cc-field">
+      <label for="cc-message">Message</label>
+      <textarea id="cc-message" name="message" rows="4" required></textarea>
+    </div>
+    <button type="submit" class="cc-submit">Submit</button>
+    </form>
+  </div>
+</dialog>
+
+<footer class="site">
+  <div class="wrap cols">
+    <div>
+      <h4>Jeric</h4>
+      <p>Aspiring web and app developer.</p>
+    </div>
+    <div>
+      <h4>Links</h4>
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#" data-open-contact>Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Elsewhere</h4>
+      <ul>
+        <li><a href="https://github.com/ATOMFLAME" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        <li><a href="#">LinkedIn</a></li>
+      </ul>
+      <p style="margin-top:1rem;">Inspired by Ram Maheshwari's website.</p>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  // Vanilla port of /components/ui/animated-shader-background.tsx (Three.js shader)
+  import * as THREE from 'https://esm.sh/three@0.160.0';
+
+  const canvas = document.getElementById('shader-bg');
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight, false);
+
+  const material = new THREE.ShaderMaterial({
+    uniforms: {
+      iTime: { value: 0 },
+      iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+    },
+    vertexShader: /* glsl */`
+      void main() {
+        gl_Position = vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: /* glsl */`
+      uniform float iTime;
+      uniform vec2 iResolution;
+
+      #define NUM_OCTAVES 3
+
+      float rand(vec2 n) {
+        return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
+      }
+
+      float noise(vec2 p) {
+        vec2 ip = floor(p);
+        vec2 u = fract(p);
+        u = u*u*(3.0-2.0*u);
+        float res = mix(
+          mix(rand(ip), rand(ip + vec2(1.0, 0.0)), u.x),
+          mix(rand(ip + vec2(0.0, 1.0)), rand(ip + vec2(1.0, 1.0)), u.x), u.y);
+        return res * res;
+      }
+
+      float fbm(vec2 x) {
+        float v = 0.0;
+        float a = 0.3;
+        vec2 shift = vec2(100);
+        mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.5));
+        for (int i = 0; i < NUM_OCTAVES; ++i) {
+          v += a * noise(x);
+          x = rot * x * 2.0 + shift;
+          a *= 0.4;
+        }
+        return v;
+      }
+
+      void main() {
+        vec2 shake = vec2(sin(iTime * 1.2) * 0.005, cos(iTime * 2.1) * 0.005);
+        vec2 p = ((gl_FragCoord.xy + shake * iResolution.xy) - iResolution.xy * 0.5) / iResolution.y * mat2(6.0, -4.0, 4.0, 6.0);
+        vec2 v;
+        vec4 o = vec4(0.0);
+
+        float f = 2.0 + fbm(p + vec2(iTime * 5.0, 0.0)) * 0.5;
+
+        for (float i = 0.0; i < 35.0; i++) {
+          v = p + cos(i * i + (iTime + p.x * 0.08) * 0.025 + i * vec2(13.0, 11.0)) * 3.5 + vec2(sin(iTime * 3.0 + i) * 0.003, cos(iTime * 3.5 - i) * 0.003);
+          float tailNoise = fbm(v + vec2(iTime * 0.5, i)) * 0.3 * (1.0 - (i / 35.0));
+          vec4 auroraColors = vec4(
+            0.1 + 0.3 * sin(i * 0.2 + iTime * 0.4),
+            0.3 + 0.5 * cos(i * 0.3 + iTime * 0.5),
+            0.7 + 0.3 * sin(i * 0.4 + iTime * 0.3),
+            1.0
+          );
+          vec4 currentContribution = auroraColors * exp(sin(i * i + iTime * 0.8)) / length(max(v, vec2(v.x * f * 0.015, v.y * 1.5)));
+          float thinnessFactor = smoothstep(0.0, 1.0, i / 35.0) * 0.6;
+          o += currentContribution * (1.0 + tailNoise * 0.8) * thinnessFactor;
+        }
+
+        o = tanh(pow(o / 100.0, vec4(1.6)));
+        gl_FragColor = o * 1.5;
+      }
+    `
+  });
+
+  const geometry = new THREE.PlaneGeometry(2, 2);
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
+
+  let frameId;
+  const animate = () => {
+    material.uniforms.iTime.value += 0.016;
+    renderer.render(scene, camera);
+    frameId = requestAnimationFrame(animate);
+  };
+  animate();
+
+  const handleResize = () => {
+    renderer.setSize(window.innerWidth, window.innerHeight, false);
+    material.uniforms.iResolution.value.set(window.innerWidth, window.innerHeight);
+  };
+  window.addEventListener('resize', handleResize);
+</script>
+
+<script>
+  // Vanilla port of /components/ui/gallery4 — embla replaced with native scroll-snap
+  (() => {
+    const track = document.querySelector('.gallery4-track');
+    const items = track ? Array.from(track.querySelectorAll('.gallery4-item')) : [];
+    const prevBtn = document.querySelector('.gallery4-btn[data-dir="prev"]');
+    const nextBtn = document.querySelector('.gallery4-btn[data-dir="next"]');
+    const dotsHost = document.querySelector('.gallery4-dots');
+    if (!track || !items.length || !dotsHost) return;
+
+    // Build dot indicators
+    const dots = items.map((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'gallery4-dot';
+      d.type = 'button';
+      d.role = 'tab';
+      d.setAttribute('aria-label', `Go to slide ${i + 1}`);
+      d.addEventListener('click', () => scrollToIndex(i));
+      dotsHost.appendChild(d);
+      return d;
+    });
+
+    const itemWidth = () => {
+      const styles = getComputedStyle(track);
+      const gap = parseFloat(styles.columnGap || styles.gap) || 0;
+      return items[0].getBoundingClientRect().width + gap;
+    };
+
+    const currentIndex = () => {
+      const w = itemWidth();
+      return Math.round(track.scrollLeft / w);
+    };
+
+    const update = () => {
+      const idx = currentIndex();
+      dots.forEach((d, i) => d.setAttribute('aria-selected', i === idx ? 'true' : 'false'));
+      if (prevBtn) prevBtn.disabled = track.scrollLeft <= 1;
+      if (nextBtn) nextBtn.disabled = Math.ceil(track.scrollLeft + track.clientWidth) >= track.scrollWidth - 1;
+    };
+
+    const scrollToIndex = (i) => {
+      track.scrollTo({ left: itemWidth() * i, behavior: 'smooth' });
+    };
+
+    if (prevBtn) prevBtn.addEventListener('click', () => scrollToIndex(Math.max(0, currentIndex() - 1)));
+    if (nextBtn) nextBtn.addEventListener('click', () => scrollToIndex(Math.min(items.length - 1, currentIndex() + 1)));
+
+    track.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+    window.addEventListener('resize', update);
+
+    // Hide dots/controls when only a single slide
+    if (items.length <= 1) {
+      dotsHost.style.display = 'none';
+      if (prevBtn?.parentElement) prevBtn.parentElement.style.display = 'none';
+    }
+
+    update();
+  })();
+</script>
+
+<script>
+  // Contact popup dialog
+  (() => {
+    const dialog = document.getElementById('contact-dialog');
+    if (!dialog) return;
+    const form = dialog.querySelector('#cc-form');
+
+    const open = (e) => {
+      if (e) e.preventDefault();
+      if (typeof dialog.showModal === 'function') {
+        dialog.showModal();
+      } else {
+        dialog.setAttribute('open', '');
+      }
+      const firstField = dialog.querySelector('input, textarea');
+      if (firstField) setTimeout(() => firstField.focus(), 50);
+    };
+
+    document.querySelectorAll('[data-open-contact]').forEach(btn => {
+      btn.addEventListener('click', open);
+    });
+    document.querySelectorAll('[data-close-contact]').forEach(btn => {
+      btn.addEventListener('click', () => dialog.close());
+    });
+
+    // Click on backdrop closes the dialog (clicking outside dialog rect but inside <dialog>)
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) {
+        const rect = dialog.getBoundingClientRect();
+        const inside = e.clientX >= rect.left && e.clientX <= rect.right
+                    && e.clientY >= rect.top  && e.clientY <= rect.bottom;
+        if (!inside) dialog.close();
+      }
+    });
+
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // TODO: wire to a real backend (Formspree / Resend / your API).
+        const submit = form.querySelector('button[type="submit"]');
+        if (submit) {
+          const original = submit.textContent;
+          submit.textContent = 'Thanks — I\'ll be in touch';
+          submit.disabled = true;
+          setTimeout(() => {
+            dialog.close();
+            form.reset();
+            submit.textContent = original;
+            submit.disabled = false;
+          }, 1400);
+        }
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>
